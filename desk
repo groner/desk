@@ -142,9 +142,9 @@ cmd_run() {
     local TODESK="$1"
     shift;
     if [ $# -eq 1 ]; then
-        cmd_go "$TODESK" -ic "$1"
+        cmd_go "$TODESK" -c ". \$DESK_ENV; $1"
     else
-        cmd_go "$TODESK" -ic '"$@"' -- "$@"
+        cmd_go "$TODESK" -c '. $DESK_ENV; "$@"' -- "$@"
     fi
 }
 
