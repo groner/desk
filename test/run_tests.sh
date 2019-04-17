@@ -143,6 +143,21 @@ RAN=$(desk run hello echo ahoy matey)
 echo "$RAN" | grep 'ahoy matey' >/dev/null
 ensure $? "Run in desk 'hello' didn't work with argument vector"
 
+notty() {
+    python -c '
+        import fcntl
+        import os
+        import termios
+        import sys
+        fcntl.ioctl(0, termios.TIOCNOTTY)
+        argv = sys.argv[1:]
+        os.execvp(argv[0], argv)' "$@"
+}
+
+RAN=$(LANG=C notty desk run hello echo no tty, no problem 2>&1)
+echo "$RAN" | grep -E 'cannot set terminal process group|no job control in this shell' >/dev/null
+ensure $? "Run in desk 'hello' didn't work with no controlling tty"
+
 ## `desk go`
 
 RAN=$(desk go example-project/Deskfile -c 'desk ; exit')
